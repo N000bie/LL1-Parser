@@ -1,0 +1,32 @@
+#!/bin/bash
+
+input=$@
+
+./compile.sol $input
+cp tinyL.out tinyL.out.sol
+./compile $input > /dev/null
+
+count=`wc -l tinyL.out | awk '{print $1'}`
+countsol=`wc -l tinyL.out.sol | awk '{print $1'}`
+
+echo "Differences between your compiled file and the solution:"
+diff tinyL.out tinyL.out.sol
+echo ""
+
+./optimize < tinyL.out > opt.out
+./optimize.sol < tinyL.out > opt.out.sol
+
+countOpt=`wc -l opt.out | awk '{print $1'}`
+countsolOpt=`wc -l opt.out.sol | awk '{print $1'}`
+
+echo "Differences between your compiled file and the solution:"
+diff opt.out opt.out.sol
+echo ""
+
+echo "$count lines in compiled file."
+echo "$countOpt lines in optimized file."
+echo ""
+
+sleep 5
+echo "Executing your program now."
+./run opt.out
